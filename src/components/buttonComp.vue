@@ -1,7 +1,9 @@
 <template>
   <button
-    @click.prevent
+    type="button"
+    @click.prevent="$emit('selected', value)"
     :value="value"
+    :class="{ active: active }"
     class="bg-very-dark-cyan text-white py-2 rounded-md hover:bg-strong-cyan hover:text-very-dark-cyan text-2xl"
   >
     <slot>Button</slot>
@@ -10,6 +12,12 @@
 <script>
 export default {
   name: "buttonComp",
-  props: ["value"],
+  props: {
+    value: { default: 0 },
+    active: {
+      type: Boolean,
+      default: false,
+    },
+  },
 };
 </script>
