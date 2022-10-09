@@ -1,10 +1,10 @@
 <template>
   <button
     type="button"
-    @click.prevent="$emit('selected', value)"
+    @click.prevent="$emit('selected', $event.target)"
     :value="value"
     :class="{ active: active }"
-    class="bg-very-dark-cyan text-white py-2 rounded-md hover:bg-strong-cyan hover:text-very-dark-cyan text-2xl"
+    class="bg-very-dark-cyan text-white py-2 rounded-md hover:bg-light-grayish-cyan hover:text-very-dark-cyan text-2xl"
   >
     <slot>Button</slot>
   </button>
