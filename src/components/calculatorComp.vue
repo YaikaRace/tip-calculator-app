@@ -3,7 +3,9 @@
     <label for="bill" class="text-grayish-cyan pb-2">Bill</label>
     <input
       type="text"
+      v-model="bill"
       placeholder="0"
+      ref="bill"
       id="bill"
       class="bg-very-light-grayish-cyan text-2xl py-2 px-4 text-right rounded-md"
     />
@@ -23,7 +25,7 @@
         >{{ button.value }}%</buttonComp
       >
       <input
-        type="text"
+        type="tel"
         @input="customTip($event.target.value)"
         ref="custom"
         placeholder="Custom"
@@ -31,10 +33,11 @@
         class="bg-very-light-grayish-cyan text-2xl py-2 px-4 text-right"
       />
     </div>
-    <label for="people" class="text-grayish-cyan">Number of People</label>
+    <label for="people" class="text-grayish-cyan mt-8">Number of People</label>
     <input
-      type="text"
+      type="tel"
       placeholder="0"
+      ref="people"
       class="bg-very-light-grayish-cyan text-2xl py-2 px-4 text-right rounded-md"
     />
     <img
@@ -43,18 +46,22 @@
       class="w-4 absolute bottom-4 left-4"
     />
   </form>
+  <tipResult></tipResult>
 </template>
 
 <script>
 import buttonComp from "./buttonComp.vue";
+import tipResult from "./tipResultComp.vue";
 
 export default {
   name: "calculatorComp",
   components: {
     buttonComp,
+    tipResult,
   },
   data() {
     return {
+      bill: null,
       selectedValue: 0,
       buttons: [
         {
@@ -96,6 +103,11 @@ export default {
     },
     customTip(newVal) {
       this.$refs.buttons.forEach((item) => item.$el.classList.remove("active"));
+      if (isNaN(newVal)) {
+        this.$refs.custom.value = "";
+        this.selectedValue = "";
+        return;
+      }
       this.selectedValue = newVal;
     },
   },
