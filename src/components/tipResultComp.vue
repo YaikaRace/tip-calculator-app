@@ -32,6 +32,7 @@
 <script>
 export default {
   name: "tipResult",
+  props: ["tipResult", "totalResult"],
   data() {
     return {
       tipAmount: 0.0,

@@ -4,6 +4,11 @@
     <input
       type="text"
       v-model="bill"
+      @input="
+        checkNumber(bill, $event.target),
+          $emit('bill-input', $event.target.value),
+          $emit('updated', $event.target.value)
+      "
       placeholder="0"
       ref="bill"
       id="bill"
@@ -18,6 +23,10 @@
     <div class="grid grid-cols-2 grid-rows-3 gap-4 mt-4">
       <buttonComp
         @selected="(t) => changeButton(t)"
+        @click="
+          $emit('tip', $event.target.value),
+            $emit('updated', $event.target.value)
+        "
         v-for="button in buttons"
         :value="button.value"
         ref="buttons"
@@ -26,7 +35,11 @@
       >
       <input
         type="tel"
-        @input="customTip($event.target.value)"
+        @input="
+          customTip($event.target.value),
+            $emit('updated', $event.target.value),
+            $emit('tip', $event.target.value)
+        "
         ref="custom"
         placeholder="Custom"
         id="custom"
@@ -37,6 +50,12 @@
     <input
       type="tel"
       placeholder="0"
+      v-model="people"
+      @input="
+        checkNumber(people, $event.target),
+          $emit('people', $event.target.value),
+          $emit('updated', $event.target.value)
+      "
       ref="people"
       class="bg-very-light-grayish-cyan text-2xl py-2 px-4 text-right rounded-md"
     />
@@ -46,23 +65,21 @@
       class="w-4 absolute bottom-4 left-4"
     />
   </form>
-  <tipResult></tipResult>
 </template>
 
 <script>
 import buttonComp from "./buttonComp.vue";
-import tipResult from "./tipResultComp.vue";
 
 export default {
   name: "calculatorComp",
   components: {
     buttonComp,
-    tipResult,
   },
   data() {
     return {
       bill: null,
       selectedValue: 0,
+      people: null,
       buttons: [
         {
           id: 1,
@@ -91,6 +108,9 @@ export default {
     changeButton(target) {
       this.$refs.buttons.forEach((item) => {
         if (item.$el.classList.contains("active")) {
+          if (item.$el == target) {
+            this.selectedValue = "";
+          }
           item.$el.classList.remove("active");
         } else {
           if (item.$el == target) {
@@ -109,6 +129,22 @@ export default {
         return;
       }
       this.selectedValue = newVal;
+    },
+    checkNumber(val, target) {
+      if (isNaN(val)) {
+        let newVal = val.replace(/\D/g, "");
+        target.value = newVal;
+        switch (val) {
+          case this.bill:
+            this.bill = newVal;
+            break;
+          case this.people:
+            this.people = newVal;
+            break;
+          default:
+            return;
+        }
+      }
     },
   },
 };
