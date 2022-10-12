@@ -9,6 +9,7 @@ module.exports = {
       "grayish-cyan": "hsl(184, 14%, 56%)",
       "light-grayish-cyan": "hsl(185, 41%, 84%)",
       "very-light-grayish-cyan": "hsl(189, 41%, 97%)",
+      red: "hsl(0, 50%, 68%)",
       white: "hsl(0, 0%, 100%)",
     },
     extend: {

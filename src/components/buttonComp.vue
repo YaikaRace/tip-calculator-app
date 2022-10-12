@@ -4,7 +4,7 @@
     @click.prevent="$emit('selected', $event.target)"
     :value="value"
     :class="{ active: active }"
-    class="bg-very-dark-cyan text-white py-2 rounded-md hover:bg-light-grayish-cyan hover:text-very-dark-cyan text-2xl"
+    class="bg-very-dark-cyan text-white py-2 rounded-md hover:bg-light-grayish-cyan hover:text-very-dark-cyan text-2xl focus:outline focus:outline-strong-cyan focus:outline-2"
   >
     <slot>Button</slot>
   </button>

@@ -1,18 +1,23 @@
 <template>
   <form class="flex flex-col relative">
-    <label for="bill" class="text-grayish-cyan pb-2">Bill</label>
+    <label for="bill" class="text-grayish-cyan pb-2 flex justify-between"
+      >Bill<span ref="billErr" class="text-red hidden"
+        >can't be zero</span
+      ></label
+    >
     <input
       type="text"
       v-model="bill"
+      @focusout="checkZero($event.target, this.$refs.billErr)"
       @input="
         checkNumber(bill, $event.target),
-          $emit('bill-input', $event.target.value),
-          $emit('updated', $event.target.value)
+          $emit('bill', $event.target.value),
+          $emit('modified', $event.target.value)
       "
       placeholder="0"
       ref="bill"
       id="bill"
-      class="bg-very-light-grayish-cyan text-2xl py-2 px-4 text-right rounded-md"
+      class="bg-very-light-grayish-cyan text-2xl py-2 px-4 text-right rounded-md focus:outline focus:outline-strong-cyan focus:outline-2 focus:border-0"
     />
     <img
       src="../assets/images/icon-dollar.svg"
@@ -20,12 +25,15 @@
       class="w-3 absolute top-12 left-4"
     />
     <label for="custom" class="text-grayish-cyan pt-8">Select tip %</label>
-    <div class="grid grid-cols-2 grid-rows-3 gap-4 mt-4">
+    <div
+      class="grid grid-cols-2 grid-rows-3 gap-4 mt-4 md:grid-cols-3 md:grid-rows-2"
+    >
       <buttonComp
         @selected="(t) => changeButton(t)"
         @click="
-          $emit('tip', $event.target.value),
-            $emit('updated', $event.target.value)
+          $emit('tip', selectedValue),
+            $emit('modified', selectedValue),
+            checkZero($refs.custom, this.$refs.tipErr)
         "
         v-for="button in buttons"
         :value="button.value"
@@ -35,29 +43,36 @@
       >
       <input
         type="tel"
+        @focusout="checkZero($event.target, this.$refs.tipErr)"
         @input="
           customTip($event.target.value),
-            $emit('updated', $event.target.value),
+            $emit('modified', $event.target.value),
             $emit('tip', $event.target.value)
         "
         ref="custom"
         placeholder="Custom"
         id="custom"
-        class="bg-very-light-grayish-cyan text-2xl py-2 px-4 text-right"
+        class="bg-very-light-grayish-cyan text-2xl py-2 px-4 text-right rounded-md focus:outline focus:outline-strong-cyan focus:outline-2 focus:border-0"
       />
     </div>
-    <label for="people" class="text-grayish-cyan mt-8">Number of People</label>
+    <span ref="tipErr" class="text-red hidden ml-auto">can't be zero</span>
+    <label for="people" class="text-grayish-cyan mt-8 pb-2 flex justify-between"
+      >Number of People<span ref="peopleErr" class="text-red hidden"
+        >can't be zero</span
+      ></label
+    >
     <input
       type="tel"
       placeholder="0"
       v-model="people"
+      @focusout="checkZero($event.target, this.$refs.peopleErr)"
       @input="
         checkNumber(people, $event.target),
           $emit('people', $event.target.value),
-          $emit('updated', $event.target.value)
+          $emit('modified', $event.target.value)
       "
       ref="people"
-      class="bg-very-light-grayish-cyan text-2xl py-2 px-4 text-right rounded-md"
+      class="bg-very-light-grayish-cyan text-2xl py-2 px-4 text-right rounded-md focus:outline focus:outline-strong-cyan focus:outline-2 focus:border-0"
     />
     <img
       src="../assets/images/icon-person.svg"
@@ -75,6 +90,7 @@ export default {
   components: {
     buttonComp,
   },
+  props: ["empty"],
   data() {
     return {
       bill: null,
@@ -128,6 +144,10 @@ export default {
         this.selectedValue = "";
         return;
       }
+      if (Number(newVal) > 100) {
+        newVal = 100;
+        this.$refs.custom.value = newVal;
+      }
       this.selectedValue = newVal;
     },
     checkNumber(val, target) {
@@ -146,6 +166,31 @@ export default {
         }
       }
     },
+    checkZero(target, targetErr) {
+      if (!target.value) {
+        if (target == this.$refs.custom) {
+          if (this.selectedValue) {
+            targetErr.classList.add("hidden");
+            target.classList.remove("border-red", "border-2");
+            return;
+          }
+        }
+        targetErr.classList.remove("hidden");
+        target.classList.add("border-red", "border-2");
+      } else {
+        targetErr.classList.add("hidden");
+        target.classList.remove("border-red", "border-2");
+      }
+    },
+  },
+  updated() {
+    if (this.empty) {
+      this.bill = null;
+      this.people = null;
+      this.selectedValue = null;
+      this.$refs.custom.value = "";
+      this.$refs.buttons.forEach((item) => item.$el.classList.remove("active"));
+    }
   },
 };
 </script>
